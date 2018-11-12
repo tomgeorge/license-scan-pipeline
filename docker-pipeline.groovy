@@ -31,8 +31,8 @@ pipeline {
   stage('Scan') {
      steps {
     
+        env.DOCKER_IMAGE = "docker-registry.default.svc:5000/cicd/nexus3"
         print "USING DOCKER IMAGE: ${DOCKER_IMAGE}"
-        //env.DOCKER_IMAGE = "docker-registry.default.svc:5000/cicd/nexus3"
 
         sh "mkdir ./scanreports"
 
