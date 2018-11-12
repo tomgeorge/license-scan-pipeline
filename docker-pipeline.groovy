@@ -23,6 +23,7 @@ pipeline {
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
+          env.DOCKER_IMAGE = "docker-registry.default.svc:5000/cicd/nexus3"
         }
       }
     }
@@ -31,7 +32,6 @@ pipeline {
   stage('Scan') {
      steps {
     
-        env.DOCKER_IMAGE = "docker-registry.default.svc:5000/cicd/nexus3"
         print "USING DOCKER IMAGE: ${DOCKER_IMAGE}"
 
         sh "mkdir ./scanreports"
