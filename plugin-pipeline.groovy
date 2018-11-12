@@ -15,11 +15,13 @@ pipeline {
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
           env.RC_URL = 'http://chat.consulting.redhat.com'
           if (!params.RC_USER?.trim()) { // string is null or empty
+            println "RC_USER was not passed in"
             env.RC_USER = 'D69DWkjdqW6QdmNmy'
           } else {
             env.RC_USER = params.RC_USER
           }
           if (!params.RC_TOKEN?.trim()) {
+            println "RC_TOKEN was not passed in"
             env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
           } else {
             env.RC_TOKEN = params.RC_TOKEN
