@@ -14,7 +14,7 @@ pipeline {
         script {
           println "Are there any params? ${params}"
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
-          env.RC_URL = 'http://chat.consulting.redhat.com'
+          env.RC_URL = 'https://chat.consulting.redhat.com'
           println "RC_USER ${env.RC_USER}"
           println "RC_TOKEN ${env.RC_TOKEN}"
           if (!env.RC_USER?.trim()) { // string is null or empty
