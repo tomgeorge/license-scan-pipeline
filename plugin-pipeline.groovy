@@ -14,18 +14,16 @@ pipeline {
         script {
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
           env.RC_URL = 'http://chat.consulting.redhat.com'
-          if (!params.RC_USER?.trim()) { // string is null or empty
+          if (!env.RC_USER?.trim()) { // string is null or empty
             println "RC_USER was not passed in"
             env.RC_USER = 'D69DWkjdqW6QdmNmy'
-          } else {
-            env.RC_USER = params.RC_USER
-          }
-          if (!params.RC_TOKEN?.trim()) {
+          } 
+          if (!env.RC_TOKEN?.trim()) {
             println "RC_TOKEN was not passed in"
             env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
-          } else {
-            env.RC_TOKEN = params.RC_TOKEN
           }
+          println "RC_USER ${RC_USER}"
+          println "RC_TOKEN ${RC_TOKEN}"
           //env.HUB_URL = 'https://bizdevhub.blackducksoftware.com'
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
