@@ -19,11 +19,11 @@ pipeline {
           println "RC_TOKEN ${env.RC_TOKEN}"
           if (!env.RC_USER?.trim()) { // string is null or empty
             println "RC_USER was not passed in"
-            env.RC_USER = 'D69DWkjdqW6QdmNmy'
+            env.RC_USER = 'PjphuNaSETH4mnGNf'
           } 
           if (!env.RC_TOKEN?.trim()) {
             println "RC_TOKEN was not passed in"
-            env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
+            env.RC_TOKEN = 'Lk1ydlfcaOadQqgmH4qqJgpqU_WkQkl62EPMy-32aIt'
           }
           println "RC_USER ${env.RC_USER}"
           println "RC_TOKEN ${env.RC_TOKEN}"
