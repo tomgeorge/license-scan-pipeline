@@ -1,0 +1,67 @@
+k8s_namespace: hygieia
+filter_tags: unpriv
+
+openshift_cluster_content:
+  - object: Builds/Deployments
+    content:
+    - name: Nexus
+      template: "{{ inventory_dir }}/../.openshift/nexus-deployment.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+    - name: Docker License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/docker-license-pipeline.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+        SOURCE_REPOSITORY_URL: "{{ source_pipeline_url }}"
+    - name: License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/license-pipeline.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+    - name: Plugin License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/plugin-license-pipeline.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+  - object: Pods
+    content:
+    - name: Docker License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/start-docker-license-pipeline.yml"
+      action: create
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+    - name: License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/start-license-pipeline.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+    - name: Plugin License Pipeline
+      template: "{{ inventory_dir }}/../.openshift/start-plugin-license-pipeline.yml"
+      namespace: "{{ k8s_namespace }}"
+      tags:
+        - unpriv
+        - all
+      params_from_vars:
+        NAMESPACE: "{{ k8s_namespace }}"
+        SOURCE_REPOSITORY_URL: "{{ source_pipeline_url }}"
+        RC_USER: "{{ rc_user }}"
+        RC_TOKEN: "{{ rc_token }}"

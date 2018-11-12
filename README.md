@@ -13,7 +13,9 @@
 
 
 
-The manifests create 3 pipelines:
+The manifests create the following:
+
++ A nexus server deployment
 
 `${NAMESPACE}/license-scan-demo-pipeline`
 
