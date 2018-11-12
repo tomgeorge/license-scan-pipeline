@@ -12,6 +12,7 @@ pipeline {
     {
       steps {
         script {
+          println "Are there any params? ${params}"
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
           env.RC_URL = 'http://chat.consulting.redhat.com'
           println "RC_USER ${env.RC_USER}"
