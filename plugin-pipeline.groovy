@@ -14,6 +14,8 @@ pipeline {
         script {
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
           env.RC_URL = 'http://chat.consulting.redhat.com'
+          println "RC_USER ${RC_USER}"
+          println "RC_TOKEN ${RC_TOKEN}"
           if (!env.RC_USER?.trim()) { // string is null or empty
             println "RC_USER was not passed in"
             env.RC_USER = 'D69DWkjdqW6QdmNmy'
