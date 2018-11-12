@@ -14,8 +14,16 @@ pipeline {
         script {
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
           env.RC_URL = 'http://rocketchat-rocket-chat.apps.mikelacourse.com'
-          env.RC_USER = 'D69DWkjdqW6QdmNmy'
-          env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
+          if (!params.RC_USER?.trim()) { // string is null or empty
+            env.RC_USER = 'D69DWkjdqW6QdmNmy'
+          } else {
+            env.RC_USER = params.RC_USER
+          }
+          if (!params.RC_TOKEN?.trim()) {
+            env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
+          } else {
+            env.RC_TOKEN = params.RC_TOKEN
+          }
           //env.HUB_URL = 'https://bizdevhub.blackducksoftware.com'
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
@@ -69,7 +77,7 @@ pipeline {
         script {
             def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to Openshift to approve/reject the requrest"
            sh """
-            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#needs-approval", "text": "${message}" }'
+            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
               """
         }
         input( message: "Approve ${ARTIFACT_NAME}?")
