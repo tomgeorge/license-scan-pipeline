@@ -13,7 +13,7 @@ pipeline {
       steps {
         script {
           env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
-          env.RC_URL = 'http://rocketchat-rocket-chat.apps.mikelacourse.com'
+          env.RC_URL = 'http://chat.consulting.redhat.com'
           if (!params.RC_USER?.trim()) { // string is null or empty
             env.RC_USER = 'D69DWkjdqW6QdmNmy'
           } else {
