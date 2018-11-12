@@ -34,7 +34,7 @@ pipeline {
     
         print "USING DOCKER IMAGE: ${DOCKER_IMAGE}"
 
-        sh "mkdir ./scanreports"
+        sh "mkdir -p ./scanreports"
 
         hub_detect '--blackduck.hub.url="${HUB_URL}" \
             --blackduck.hub.api.token="${HUB_TOKEN}" \

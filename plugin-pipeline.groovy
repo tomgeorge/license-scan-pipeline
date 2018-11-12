@@ -42,7 +42,7 @@ pipeline {
         print "USING DIR: ${CONTEXT_DIR}"
         sh "ls -lrt ${CONTEXT_DIR}"  
     
-        sh "mkdir ./scanreports"
+        sh "mkdir -p ./scanreports"
         dir("${CONTEXT_DIR}")
         {
           hub_detect '--blackduck.hub.url="${HUB_URL}" \
