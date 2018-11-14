@@ -104,8 +104,9 @@ pipeline {
       steps {
         script {
           sh 'pwd; ls -lrt'
-          def reportPath = readFile('repfilepath').trim()
+          def reportPath = readFile('./repfilepath').trim()
           print "rep:" + reportPath
+          sh 'cat ./repfilepath'
 
           dir ("${CONTEXT_DIR}")
           {
