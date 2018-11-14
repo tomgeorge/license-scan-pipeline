@@ -59,6 +59,7 @@ It would be nice if there were ways to do this in the OpenShift manifests.
          - >                                                                                           oc start-build license-scan-demo-pipeline -e CONTEXT_DIR=${CONTEXT_DIR} -e APPLICATION_SOURCE_REPO="${SOURCE_GIT_REPO}" -e ARTIFACT_NAME="${ARTIFACT_NAME}" -e APPROVAL_NOTES="${APPROVAL_NOTES}" 
   ```
 
+- [ ] Investigate the intermittent timeouts during the `hub_detect` phase
 
 
 
