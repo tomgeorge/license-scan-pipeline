@@ -9,18 +9,6 @@ metadata:
     tags: ci,repository-manager,nexus3,nexus,sonatype
 objects:
 - apiVersion: v1
-  kind: ImageStream
-  metadata:
-    labels:
-      app: ${SERVICE_NAME}
-    name: ${SERVICE_NAME}
-  spec:
-    tags:
-    - from:
-        kind: DockerImage
-        name: registry.connect.redhat.com/sonatype/nexus-repository-manager:${NEXUS_VERSION}
-      name: ${NEXUS_VERSION}
-- apiVersion: v1
   kind: DeploymentConfig
   metadata:
     labels:
@@ -43,7 +31,7 @@ objects:
         - env:
           - name: CONTEXT_PATH
             value: /
-          image: ' '
+          image: ${NAMESPACE}/nexus-repository-manager:${NEXUS_VERSION}
           imagePullPolicy: IfNotPresent
           livenessProbe:
             exec:
@@ -139,6 +127,7 @@ objects:
       requests:
         storage: ${VOLUME_CAPACITY}
 parameters:
+- name: NAMESPACE
 - displayName: Sonatype Nexus Repository Manager service name
   name: SERVICE_NAME
   required: true

@@ -13,7 +13,7 @@ pipeline {
       steps {
         script {
           println "Are there any params? ${params}"
-          env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
+          env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
           env.RC_URL = 'https://chat.consulting.redhat.com'
           println "RC_USER ${env.RC_USER}"
           println "RC_TOKEN ${env.RC_TOKEN}"

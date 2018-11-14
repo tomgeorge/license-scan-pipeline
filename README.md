@@ -5,11 +5,14 @@
 
 
 1. Create a Jenkins instance in OpenShift
-
 2. Install  [Black Duck Detect Plugin](https://wiki.jenkins.io/display/JENKINS/Black+Duck+Detect+Plugin)
 3. `ansible-galaxy install -r requirements.yml -p galaxy`
 4. Login to your openshift cluster so `ansible-applier` can connect
-5. `ansible-playbook -i .applier galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e filter_tags=all -e k8s_namespace${YOUR NAMESPACE}`
+5. Before this, I had to get a nexus server image to my cluster because it didn't have `registry.connect.redhat.com` as a registry:
+   1. `docker pull registry.connect.redhat.com/sonatype/nexus-repository-manager:latest `
+   2. `docker tag registry.connect.redhat.com/sonatype/nexus-repository-manager ${DOCKER_REGISTRY_URL}/${OPENSHIFT_NAMESPACE}/nexus-repository-manager:latest`
+   3. `docker push ${DOCKER_REGISTRY_URL}/${OPENSHIFT_NAMESPACE}/nexus-repository-manager:latest`
+6. `ansible-playbook -i .applier galaxy/openshift-applier/playbooks/openshift-cluster-seed.yml -e filter_tags=all -e k8s_namespace${YOUR NAMESPACE}`
 
 
 
