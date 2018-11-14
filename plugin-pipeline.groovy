@@ -65,6 +65,7 @@ pipeline {
         }
         sh 'pwd'
         sh 'ls -lrt'
+        sh 'ls -lrt scanreports'
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
         
        
