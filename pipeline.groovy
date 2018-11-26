@@ -15,10 +15,18 @@ pipeline {
     {
       steps {
         script {
-          env.NEXUS_URL = 'http://nexus-cicd.apps.mikelacourse.com'
-          env.RC_URL = 'http://rocketchat-rocket-chat.apps.mikelacourse.com'
-          env.RC_USER = 'D69DWkjdqW6QdmNmy'
-          env.RC_TOKEN = 'mphgaHUUq701k8_zsZSe7vNSYa9iaUxlX3yORXJtqH6'
+          env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
+          env.RC_URL = 'https://chat.consulting.redhat.com'
+          println "RC_USER ${env.RC_USER}"
+          println "RC_TOKEN ${env.RC_TOKEN}"
+          if (!env.RC_USER?.trim()) { // string is null or empty
+            println "RC_USER was not passed in"
+            env.RC_USER = 'PjphuNaSETH4mnGNf'
+          } 
+          if (!env.RC_TOKEN?.trim()) {
+            println "RC_TOKEN was not passed in"
+            env.RC_TOKEN = 'Lk1ydlfcaOadQqgmH4qqJgpqU_WkQkl62EPMy-32aIt'
+          }
           //env.HUB_URL = 'https://bizdevhub.blackducksoftware.com'
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
@@ -70,7 +78,7 @@ pipeline {
         script {
             def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to Openshift to approve/reject the requrest"
            sh """
-            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#needs-approval", "text": "${message}" }'
+            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
               """
         }
         input( message: "Approve ${ARTIFACT_NAME}?")
@@ -122,7 +130,7 @@ pipeline {
           {
             def message = "The following artifacts have been approved: ${ARTIFACT_NAME}. They can be accessed at ${NEXUS_URL}"
            sh """
-            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#approved-artifacts", "text": "${message}" }'
+            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
               """
           }
         }
