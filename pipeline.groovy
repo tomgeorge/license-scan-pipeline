@@ -113,7 +113,7 @@ pipeline {
         
             sh "find /home/jenkins/.m2/repository -name '*${ARTIFACT_NAME}*' > uploadfiles"
             packagePath = readFile('uploadfiles').trim()
-            sh "zip ${ARTIFACT_NAME}.zip -r ${packagePath}"
+            sh "zip -r ${ARTIFACT_NAME}.zip ."
             sh "curl -k -u admin:admin123 -X PUT " + nexusurl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
 
             env.NEXUS_ARTIFACT_URL = nexusurl + uploadPath 
