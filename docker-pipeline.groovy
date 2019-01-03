@@ -36,6 +36,9 @@ pipeline {
 
         sh "mkdir -p ./scanreports"
 
+        echo "artifact name ${ARTIFACT_NAME}"
+        echo "artifact name ${params.ARTIFACT_NAME}"
+
         hub_detect '--blackduck.hub.url="${HUB_URL}" \
             --blackduck.hub.api.token="${HUB_TOKEN}" \
             --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
