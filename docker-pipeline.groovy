@@ -38,13 +38,15 @@ pipeline {
 
         echo "artifact name ${ARTIFACT_NAME}"
         echo "artifact name ${params.ARTIFACT_NAME}"
-
-        hub_detect '--blackduck.hub.url="${HUB_URL}" \
-            --blackduck.hub.api.token="${HUB_TOKEN}" \
-            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-            --detect.docker.image="${DOCKER_IMAGE}" --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
-            --detect.risk.report.pdf.path="./scanreports/" \
-            --blackduck.hub.trust.cert=true'
+        
+        withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+          hub_detect '--blackduck.hub.url="${HUB_URL}" \
+              --blackduck.hub.api.token="${HUB_TOKEN}" \
+              --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+              --detect.docker.image="${DOCKER_IMAGE}" --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
+              --detect.risk.report.pdf.path="./scanreports/" \
+              --blackduck.hub.trust.cert=true'
+        }
 
         sh 'pwd'
         sh 'ls -lrt'
