@@ -51,11 +51,11 @@ pipeline {
   stage('Scan') {
      steps {
     
-        print "USING DIR: ${CONTEXT_DIR}"
+/*        print "USING DIR: ${CONTEXT_DIR}"
         sh "ls -lrt ${CONTEXT_DIR}"  
     
         dir("${CONTEXT_DIR}")
-        {
+        { */
           withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
             hub_detect '--blackduck.hub.url="${HUB_URL}" \
                 --blackduck.hub.api.token="${HUB_TOKEN}" \
@@ -68,9 +68,8 @@ pipeline {
             sh 'find . -name "*.pdf" > repfilepath'
             archiveArtifacts(artifacts: '**/scanreports/**')
           }
-       }
+       //}
      }
-  
    }
 
    stage('Verify Report') 
