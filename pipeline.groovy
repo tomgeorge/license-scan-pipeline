@@ -17,13 +17,13 @@ pipeline {
         script {
           env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
           env.RC_URL = 'https://chat.consulting.redhat.com'
-          println "RC_USER ${env.RC_USER}"
-          println "RC_TOKEN ${env.RC_TOKEN}"
-          if (!env.RC_USER?.trim()) { // string is null or empty
+          println "RC_USER ${params.RC_USER}"
+          println "RC_TOKEN ${params.RC_TOKEN}"
+          if (!params.RC_USER?.trim()) { // string is null or empty
             println "RC_USER was not passed in"
             env.RC_USER = 'PjphuNaSETH4mnGNf'
           } 
-          if (!env.RC_TOKEN?.trim()) {
+          if (!params.RC_TOKEN?.trim()) {
             println "RC_TOKEN was not passed in"
             env.RC_TOKEN = 'Lk1ydlfcaOadQqgmH4qqJgpqU_WkQkl62EPMy-32aIt'
           }
@@ -31,6 +31,8 @@ pipeline {
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
+          env.NEXUS_USER = 'admin'
+          env.NEXUS_PASSWORD='${NEXUS_PASSWORD}'
         }
       }
     }
@@ -54,19 +56,18 @@ pipeline {
     
         dir("${CONTEXT_DIR}")
         {
-
-          sh "mkdir ./scanreports"
-          hub_detect '--blackduck.hub.url="${HUB_URL}" \
-            --blackduck.hub.api.token="${HUB_TOKEN}" \
-            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-            --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
-            --detect.risk.report.pdf.path="./scanreports/" \
-            --blackduck.hub.trust.cert=true'
-
-          sh 'pwd'
-          sh 'ls -lrt'
-          sh 'find . -name "*.pdf" > repfilepath'
-          archiveArtifacts(artifacts: '**/scanreports/**')
+          withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+            hub_detect '--blackduck.hub.url="${HUB_URL}" \
+                --blackduck.hub.api.token="${HUB_TOKEN}" \
+                --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+                --detect.docker.image="${DOCKER_IMAGE}" --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
+                --detect.risk.report.pdf.path="./scanreports/" \
+                --blackduck.hub.trust.cert=true'
+            sh 'pwd'
+            sh 'ls -lrt'
+            sh 'find . -name "*.pdf" > repfilepath'
+            archiveArtifacts(artifacts: '**/scanreports/**')
+          }
        }
      }
   
@@ -109,12 +110,12 @@ pipeline {
             print uploadPath
             reportPath = readFile('repfilepath').trim()
             print "rep:" + reportPath
-            sh "curl -k -u admin:admin123 -X PUT " + nexusurl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
+            sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + nexusurl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
         
             sh "find /home/jenkins/.m2/repository -name '*${ARTIFACT_NAME}*' > uploadfiles"
             packagePath = readFile('uploadfiles').trim()
             sh "zip -r ${ARTIFACT_NAME}.zip ."
-            sh "curl -k -u admin:admin123 -X PUT " + nexusurl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
+            sh "curl -k -u ${NEXUS_USERNAME}:admin123 -X PUT " + nexusurl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
 
             env.NEXUS_ARTIFACT_URL = nexusurl + uploadPath 
           }
