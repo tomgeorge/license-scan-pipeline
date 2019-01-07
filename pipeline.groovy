@@ -51,25 +51,35 @@ pipeline {
   stage('Scan') {
      steps {
     
-/*        print "USING DIR: ${CONTEXT_DIR}"
+        print "USING DIR: ${CONTEXT_DIR}"
         sh "ls -lrt ${CONTEXT_DIR}"  
     
         dir("${CONTEXT_DIR}")
-        { */
+        {
           withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
             hub_detect '--blackduck.hub.url="${HUB_URL}" \
                 --blackduck.hub.api.token="${HUB_TOKEN}" \
                 --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-                --detect.docker.image="${DOCKER_IMAGE}" --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
+                --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
                 --detect.risk.report.pdf.path="./scanreports/" \
                 --blackduck.hub.trust.cert=true'
-            sh 'pwd'
-            sh 'ls -lrt'
-            sh 'find . -name "*.pdf" > repfilepath'
-            archiveArtifacts(artifacts: '**/scanreports/**')
           }
-       //}
+
+          sh "mkdir ./scanreports"
+          hub_detect '--blackduck.hub.url="${HUB_URL}" \
+            --blackduck.hub.api.token="${HUB_TOKEN}" \
+            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+            --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL --detect.risk.report.pdf=true \
+            --detect.risk.report.pdf.path="./scanreports/" \
+            --blackduck.hub.trust.cert=true'
+
+          sh 'pwd'
+          sh 'ls -lrt'
+          sh 'find . -name "*.pdf" > repfilepath'
+          archiveArtifacts(artifacts: '**/scanreports/**')
+       }
      }
+  
    }
 
    stage('Verify Report') 
