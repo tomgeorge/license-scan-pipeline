@@ -27,6 +27,11 @@ pipeline {
         }
       }
     }
+  stage('Build') {
+    steps {
+      sh 'mvn clean install'
+    }
+  }
 
   // Run Maven build, skipping tests
   stage('Scan') {
@@ -48,8 +53,6 @@ pipeline {
               --blackduck.hub.trust.cert=true'
         }
 
-        sh 'pwd'
-        sh 'ls -lrt'
         sh 'find . -name "*.pdf" > repfilepath'
         archiveArtifacts(artifacts: '**/scanreports/**')
      }
