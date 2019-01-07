@@ -29,7 +29,10 @@ pipeline {
     }
   stage('Build') {
     steps {
-      sh 'mvn clean install'
+      sh "git clone ${params.TOOL_REPOSITORY_URL} tool_to_scan"
+      dir("tool_to_scan") {
+        sh "mvn clean install"
+      }
     }
   }
 
