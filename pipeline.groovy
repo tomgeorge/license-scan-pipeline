@@ -50,8 +50,9 @@ pipeline {
     // Run Maven build, skipping tests
   stage('Scan') {
      steps {
-       withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+       withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN2")]) {
          echo "HUB_TOKEN is ${HUB_TOKEN}"
+         echo "HUB_TOKEN2 is ${HUB_TOKEN2}"
          hub_detect '--blackduck.hub.url="${HUB_URL}" \
            --blackduck.hub.api.token="${HUB_TOKEN}" \
            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
