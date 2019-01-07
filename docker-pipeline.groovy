@@ -31,7 +31,7 @@ pipeline {
     steps {
       sh "git clone ${params.TOOL_REPOSITORY_URL} tool_to_scan"
       dir("tool_to_scan") {
-        sh "mvn clean install"
+        sh "mvn clean install -DskipTests"
       }
     }
   }
