@@ -51,6 +51,7 @@ pipeline {
   stage('Scan') {
      steps {
        withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+         echo "HUB_TOKEN "${HUB_TOKEN}"
          hub_detect '--blackduck.hub.url="${HUB_URL}" \
            --blackduck.hub.api.token="${HUB_TOKEN}" \
            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
