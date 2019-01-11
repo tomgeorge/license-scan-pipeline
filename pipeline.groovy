@@ -40,9 +40,8 @@ pipeline {
     // Checkout source code
     stage('Git Checkout') {
       steps {
-        // sh 'git config --global http.sslVerify false'
         git url: "${APPLICATION_SOURCE_REPO}"
-        //print "GIT URL:${APPLICATION_SOURCE_REPO}" 
+        sh "mkdir -p scanreports"
       }
     }
 
@@ -65,7 +64,7 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: params.ROCKET_CHAT_CREDENTIALS_ID, variable: "RC_TOKEN")]) {
           script {
-              def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to Openshift to approve/reject the requrest"
+              def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to ${env.BUILD_URL} to approve/reject the requrest"
              sh """
               curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
                 """
