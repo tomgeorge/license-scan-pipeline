@@ -19,16 +19,6 @@ pipeline {
           env.RC_URL = 'https://chat.consulting.redhat.com'
           println "RC_USER ${params.RC_USER}"
           println "RC_TOKEN ${params.RC_TOKEN}"
-          if (!params.RC_USER?.trim()) { // string is null or empty
-            println "RC_USER was not passed in"
-            env.RC_USER = 'PjphuNaSETH4mnGNf'
-          } 
-          if (!params.RC_TOKEN?.trim()) {
-            println "RC_TOKEN was not passed in"
-            env.RC_TOKEN = 'Lk1ydlfcaOadQqgmH4qqJgpqU_WkQkl62EPMy-32aIt'
-          }
-          //env.HUB_URL = 'https://bizdevhub.blackducksoftware.com'
-          //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.NEXUS_USER = 'admin'
           env.NEXUS_PASSWORD='${NEXUS_PASSWORD}'
@@ -41,13 +31,13 @@ pipeline {
     stage('Git Checkout') {
       steps {
         git url: "${APPLICATION_SOURCE_REPO}"
-        sh "mkdir -p scanreports"
       }
     }
 
     // Run Maven build, skipping tests
   stage('Scan') {
      steps {
+       sh "mkdir -p ./scanreports"
        withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
          hub_detect '--blackduck.hub.url="${HUB_URL}" \
            --blackduck.hub.api.token="${HUB_TOKEN}" \
