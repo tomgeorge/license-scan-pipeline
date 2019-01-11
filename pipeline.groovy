@@ -30,7 +30,6 @@ pipeline {
           //env.HUB_URL = 'https://bizdevhub.blackducksoftware.com'
           //env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
-          env.HUB_TOKEN = 'NDM2ODEwN2MtMWZkMC00MTAwLTgyNDItMzViMGY1ZDQ2YzdkOjM4OTVlMTA0LTk3ZjMtNDEzYS05ZjdiLWExYjhkNjgwYWY0Mg=='
           env.NEXUS_USER = 'admin'
           env.NEXUS_PASSWORD='${NEXUS_PASSWORD}'
         }
@@ -50,9 +49,7 @@ pipeline {
     // Run Maven build, skipping tests
   stage('Scan') {
      steps {
-       withCredentials([string(credentialsId: params.CREDENTIALS_ID, variable: "HUB_TOKEN2")]) {
-         echo "HUB_TOKEN is ${HUB_TOKEN}"
-         echo "HUB_TOKEN2 is ${HUB_TOKEN2}"
+       withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
          hub_detect '--blackduck.hub.url="${HUB_URL}" \
            --blackduck.hub.api.token="${HUB_TOKEN}" \
            --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
@@ -66,13 +63,15 @@ pipeline {
    stage('Verify Report') 
    {
       steps {
-        script {
-            def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to Openshift to approve/reject the requrest"
-           sh """
-            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
-              """
+        withCredentials([string(credentialsId: params.ROCKET_CHAT_CREDENTIALS_ID, variable: "RC_TOKEN")]) {
+          script {
+              def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to Openshift to approve/reject the requrest"
+             sh """
+              curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+                """
+          }
+          input( message: "Approve ${ARTIFACT_NAME}?")
         }
-        input( message: "Approve ${ARTIFACT_NAME}?")
       }
    }
 
@@ -113,12 +112,10 @@ pipeline {
       }
    }
 
-   stage('Notify Users')
-   {
+   stage('Notify Users') {
       steps {
         script {
-          dir ("${CONTEXT_DIR}")
-          {
+          dir ("${CONTEXT_DIR}") {
             def message = "The following artifacts have been approved: ${ARTIFACT_NAME}. They can be accessed at ${NEXUS_URL}"
            sh """
             curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
@@ -127,7 +124,5 @@ pipeline {
         }
       }
    }
-
-
  }
 }
