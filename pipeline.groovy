@@ -17,8 +17,6 @@ pipeline {
         script {
           env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
           env.RC_URL = 'https://chat.consulting.redhat.com'
-          println "RC_USER ${params.RC_USER}"
-          println "RC_TOKEN ${params.RC_TOKEN}"
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.NEXUS_USER = 'admin'
           env.NEXUS_PASSWORD='${NEXUS_PASSWORD}'
@@ -35,20 +33,21 @@ pipeline {
     }
 
     // Run Maven build, skipping tests
-  stage('Scan') {
-     steps {
-       sh "mkdir -p ./scanreports"
-       withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
-         hub_detect '--blackduck.hub.url="${HUB_URL}" \
-           --blackduck.hub.api.token="${HUB_TOKEN}" \
-           --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-           --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
-           --detect.risk.report.pdf=true \
-           --detect.risk.report.pdf.path="./scanreports/" \
-           --blackduck.hub.trust.cert=true'
-       }
-     }
-   }
+    stage('Scan') {
+      steps {
+        sh "mkdir -p ./scanreports"
+          withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+            hub_detect '--blackduck.hub.url="${HUB_URL}" \
+              --blackduck.hub.api.token="${HUB_TOKEN}" \
+              --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+              --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
+              --detect.risk.report.pdf=true \
+              --detect.risk.report.pdf.path="./scanreports/" \
+              --blackduck.hub.trust.cert=true'
+          }
+        sh "ls -lrt"
+      }
+    }
 
    stage('Verify Report') 
    {
@@ -94,7 +93,7 @@ pipeline {
             sh "find /home/jenkins/.m2/repository -name '*${ARTIFACT_NAME}*' > uploadfiles"
             packagePath = readFile('uploadfiles').trim()
             sh "zip -r ${ARTIFACT_NAME}.zip ."
-            sh "curl -k -u ${NEXUS_USERNAME}:admin123 -X PUT " + nexusurl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
+            sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + nexusurl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
 
             env.NEXUS_ARTIFACT_URL = nexusurl + uploadPath 
           }
