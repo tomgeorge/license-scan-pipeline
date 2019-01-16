@@ -16,6 +16,7 @@ pipeline {
       steps {
         script {
           env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
+          env.RC_USER = 'robot'
           env.RC_URL = 'https://chat.consulting.redhat.com'
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.NEXUS_USER = 'admin'
