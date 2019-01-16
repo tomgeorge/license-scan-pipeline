@@ -66,17 +66,17 @@ pipeline {
       }
    }
 
-   stage('Sign Artifact')
-   {
-      steps {
-        script {
-          dir ("${CONTEXT_DIR}")
-          {
-            print "Add signature to ${ARTIFACT_NAME}.zip"
-          }
-        }
-      }
-   }
+   // stage('Sign Artifact')
+   // {
+   //    steps {
+   //      script {
+   //        dir ("${CONTEXT_DIR}")
+   //        {
+   //          print "Add signature to ${ARTIFACT_NAME}.zip"
+   //        }
+   //      }
+   //    }
+   // }
 
    stage('Push to Nexus')
    {
