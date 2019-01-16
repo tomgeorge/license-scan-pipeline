@@ -16,11 +16,11 @@ pipeline {
       steps {
         script {
           env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
-          env.RC_USER = 'robot'
+          env.RC_USER = 'tomgeorge'
           env.RC_URL = 'https://chat.consulting.redhat.com'
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.NEXUS_USER = 'admin'
-          env.NEXUS_PASSWORD='${NEXUS_PASSWORD}'
+          env.NEXUS_PASSWORD='admin123'
         }
       }
     }
@@ -43,10 +43,11 @@ pipeline {
               --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
               --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
               --detect.risk.report.pdf=true \
-              // --detect.risk.report.pdf.path="./scanreports/" \
+              --detect.risk.report.pdf.path="./scanreports/" \
               --blackduck.hub.trust.cert=true'
           }
         sh "ls -lrt"
+        archiveArtifacts(artifacts: '**/scanreports/**')
       }
     }
 
