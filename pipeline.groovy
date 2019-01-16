@@ -19,7 +19,7 @@ pipeline {
           env.RC_USER = 'tomgeorge'
           env.RC_URL = 'https://chat.consulting.redhat.com'
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
-          env.NEXUS_USER = 'admin'
+          env.NEXUS_USERNAME = 'admin'
           env.NEXUS_PASSWORD='admin123'
         }
       }
