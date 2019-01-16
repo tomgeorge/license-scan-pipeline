@@ -54,11 +54,13 @@ pipeline {
    stage('Verify Report') 
    {
       steps {
-        withCredentials([string(credentialsId: params.ROCKET_CHAT_CREDENTIALS_ID, variable: "RC_TOKEN")]) {
+        withCredentials([
+          string(credentialsId: params.ROCKET_CHAT_TOKEN_CREDENTIALS_ID, variable: "RC_TOKEN"),
+          string(credentialsId: params.ROCKET_CHAT_USERNAME_CREDENTIALS_ID, variable: "RC_USERNAME")]) {
           script {
               def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to ${env.BUILD_URL} to approve/reject the requrest"
              sh """
-              curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USER}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+              curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USERNAME}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
                 """
           }
           input( message: "Approve ${ARTIFACT_NAME}?")
