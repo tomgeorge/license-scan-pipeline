@@ -82,6 +82,11 @@ pipeline {
    {
       steps {
         script {
+          sh 'pwd; ls -lrt'
+          def reportPath = readFile('./repfilepath').trim()
+          print "rep:" + reportPath
+          sh 'cat ./repfilepath'
+
           dir ("${CONTEXT_DIR}")
           {
             def nexusurl = "${NEXUS_URL}/repository/lm-approved/"
