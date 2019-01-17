@@ -26,6 +26,7 @@ pipeline {
     stage('Git Checkout') {
       steps {
         git url: "${APPLICATION_SOURCE_REPO}"
+        sh "npm install"
       }
     }
     
