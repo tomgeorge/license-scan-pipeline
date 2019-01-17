@@ -8,11 +8,8 @@ pipeline {
     label 'maven'
   }
 
-  // Pipeline Stages start here
-  // Requeres at least one stage
   stages {
-    stage ('init')
-    {
+    stage ('init') {
       steps {
         script {
           env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
@@ -25,16 +22,13 @@ pipeline {
         }
       }
     }
-
-
-    // Checkout source code
+ 
     stage('Git Checkout') {
       steps {
         git url: "${APPLICATION_SOURCE_REPO}"
       }
     }
-
-    // Run Maven build, skipping tests
+    
     stage('Scan') {
       steps {
         sh "mkdir -p ./scanreports"
@@ -51,37 +45,23 @@ pipeline {
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
       }
     }
-
-   stage('Verify Report') 
-   {
+ 
+    stage('Verify Report') {
       steps {
         withCredentials([
           string(credentialsId: params.ROCKET_CHAT_TOKEN_CREDENTIALS_ID, variable: "RC_TOKEN"),
           string(credentialsId: params.ROCKET_CHAT_USERNAME_CREDENTIALS_ID, variable: "RC_USERNAME")]) {
           script {
-              def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to ${env.BUILD_URL} to approve/reject the requrest"
-             sh """
-              curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USERNAME}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
-                """
+            def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to ${env.BUILD_URL} to approve/reject the requrest"
+            sh """
+            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USERNAME}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+            """
           }
         }
       }
-   }
+    }
 
-   // stage('Sign Artifact')
-   // {
-   //    steps {
-   //      script {
-   //        dir ("${CONTEXT_DIR}")
-   //        {
-   //          print "Add signature to ${ARTIFACT_NAME}.zip"
-   //        }
-   //      }
-   //    }
-   // }
-
-   stage('Push to Nexus')
-   {
+    stage('Push to Nexus') {
       steps {
         script {
           def reportPath = readFile('./repfilepath').trim()
@@ -96,17 +76,20 @@ pipeline {
           print "artifact URL ${env.NEXUS_ARTIFACT_URL}"
         }
       }
-   }
-
-   stage('Notify Users') {
-     steps {
-       script {
-         def message = "The following artifacts have been approved: ${ARTIFACT_NAME}. They can be accessed at ${NEXUS_URL}"
-         sh """
-           curl -H "X-Auth-Token: ${ROCKET_CHAT_TOKEN_CREDENTIALS_ID}" -H "X-User-Id: ${ROCKET_CHAT_USERNAME_CREDENTIALS_ID}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
-         """
-       }
-     }
-   }
- }
+    }
+ 
+    stage('Notify Users') {
+      steps {
+        withCredentials([string(credentialsId: params.ROCKET_CHAT_TOKEN_CREDENTIALS_ID, variable: "RC_TOKEN"),
+          string(credentialsId: params.ROCKET_CHAT_USERNAME_CREDENTIALS_ID, variable: "RC_USERNAME")]) {
+          script {
+            def message = "The following artifacts have been approved: ${ARTIFACT_NAME}. They can be accessed at ${NEXUS_URL}"
+            sh """
+              curl -H "X-Auth-Token: ${ROCKET_CHAT_TOKEN_CREDENTIALS_ID}" -H "X-User-Id: ${ROCKET_CHAT_USERNAME_CREDENTIALS_ID}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+           """
+          }
+        }
+      }
+    }
+  }
 }
