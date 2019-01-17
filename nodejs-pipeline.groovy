@@ -40,7 +40,8 @@ pipeline {
               --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
               --detect.risk.report.pdf=true \
               --detect.risk.report.pdf.path="./scanreports/" \
-              --blackduck.hub.trust.cert=true'
+              --blackduck.hub.trust.cert=true \
+              --detect.api.timeout=900000'
           }
         archiveArtifacts(artifacts: '**/scanreports/**')
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
