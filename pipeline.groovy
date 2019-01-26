@@ -31,8 +31,9 @@ pipeline {
     stage('Scan') {
       steps {
         sh "mkdir -p ./scanreports"
-          withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
-            hub_detect '--blackduck.hub.url="${HUB_URL}" \
+          withCredentials([string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN"),
+          string(credentialsId: params.BLACKDUCK_URL, variable: "BLACKDUCK_URL")]]) {
+            hub_detect '--blackduck.hub.url="${BLACKDUCK_URL}" \
               --blackduck.hub.api.token="${HUB_TOKEN}" \
               --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
               --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \

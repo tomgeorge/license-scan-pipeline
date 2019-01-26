@@ -49,6 +49,12 @@ objects:
             value: "nexus-username"
           - name: "NEXUS_PASSWORD_CREDENTIALS_ID"
             value: "nexus-password"
+          - name: "NEXUS_URL"
+            value: "http://nexus-jenkins.192.168.42.57.nip.io"
+          - name: "BLACKDUCK_URL"
+            value: "https://redhathub.blackducksoftware.com"
+          - name: "ROCKET_CHAT_URL"
+            value: "https://chat.consulting.redhat.com"
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
