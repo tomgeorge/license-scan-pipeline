@@ -44,6 +44,7 @@ pipeline {
           }
         archiveArtifacts(artifacts: '**/scanreports/**')
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
+        sh 'ls -lR'
       }
     }
  
