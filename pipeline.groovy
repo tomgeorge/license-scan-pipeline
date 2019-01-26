@@ -12,8 +12,7 @@ pipeline {
     stage ('init') {
       steps {
         script {
-          env.NEXUS_URL = 'http://nexus-foss-pipeline-scan.apps.d3.casl.rht-labs.com'
-          env.RC_USER = 'tomgeorge'
+          env.NEXUS_URL = 'http://nexus-memcached-operator.apps.d2.casl.rht-labs.com/'
           env.RC_URL = 'https://chat.consulting.redhat.com'
           env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           env.NEXUS_USERNAME = 'admin'
@@ -64,17 +63,21 @@ pipeline {
 
     stage('Push to Nexus') {
       steps {
-        script {
-          def reportPath = readFile('./repfilepath').trim()
-          def uploadUrl = "${NEXUS_URL}/repository/${env.NEXUS_DESTINATION_REPOSITORY}/"
-          def uploadPath = new Date().format("YYYY/MM/dd/HH-mm-ss");
-          sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
-          sh "find /home/jenkins/.m2/repository -name '*${ARTIFACT_NAME}*' > uploadfiles"
-          packagePath = readFile('uploadfiles').trim()
-          sh "zip -r ${ARTIFACT_NAME}.zip ."
-          sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
-          env.NEXUS_ARTIFACT_URL = uploadUrl + uploadPath 
-          print "artifact URL ${env.NEXUS_ARTIFACT_URL}"
+        withCredentials([
+          string(credentialsId: params.NEXUS_USERNAME_CREDENTIALS_ID, variable: "NEXUS_USERNAME"),
+          string(credentialsId: params.NEXUS_PASSWORD_CREDENTIALS_ID, variable: "NEXUS_PASSWORD")]) {
+          script {
+            def reportPath = readFile('./repfilepath').trim()
+            def uploadUrl = "${NEXUS_URL}/repository/${env.NEXUS_DESTINATION_REPOSITORY}/"
+            def uploadPath = new Date().format("YYYY/MM/dd/HH-mm-ss");
+            sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
+            sh "find /home/jenkins/.m2/repository -name '*${ARTIFACT_NAME}*' > uploadfiles"
+            packagePath = readFile('uploadfiles').trim()
+            sh "zip -r ${ARTIFACT_NAME}.zip ."
+            sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
+            env.NEXUS_ARTIFACT_URL = uploadUrl + uploadPath 
+            print "artifact URL ${env.NEXUS_ARTIFACT_URL}"
+          }
         }
       }
     }
