@@ -12,11 +12,11 @@ pipeline {
     stage ('init') {
       steps {
         script {
-          env.NEXUS_URL = 'http://nexus-memcached-operator.apps.d2.casl.rht-labs.com/'
-          env.RC_URL = 'https://chat.consulting.redhat.com'
-          env.HUB_URL = 'https://redhathub.blackducksoftware.com'
-          env.NEXUS_USERNAME = 'admin'
-          env.NEXUS_PASSWORD='admin123'
+          // env.NEXUS_URL = 'http://nexus-memcached-operator.apps.d2.casl.rht-labs.com/'
+          // env.RC_URL = 'https://chat.consulting.redhat.com'
+          // env.HUB_URL = 'https://redhathub.blackducksoftware.com'
+          // env.NEXUS_USERNAME = 'admin'
+          // env.NEXUS_PASSWORD='admin123'
           env.NEXUS_DESTINATION_REPOSITORY = 'lm-approved'
         }
       }
@@ -32,9 +32,8 @@ pipeline {
       steps {
         sh "mkdir -p ./scanreports"
           withCredentials([
-          string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN"),
-          string(credentialsId: params.BLACKDUCK_URL, variable: "BLACKDUCK_URL")]) {
-            hub_detect '--blackduck.hub.url="${BLACKDUCK_URL}" \
+          string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
+            hub_detect '--blackduck.hub.url="${params.BLACKDUCK_URL}" \
               --blackduck.hub.api.token="${HUB_TOKEN}" \
               --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
               --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
@@ -56,7 +55,7 @@ pipeline {
           script {
             def message = "Please review ${ARTIFACT_NAME} located at ${HUB_URL} and proceed to ${env.BUILD_URL} to approve/reject the requrest"
             sh """
-            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USERNAME}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+            curl -H "X-Auth-Token: ${RC_TOKEN}" -H "X-User-Id: ${RC_USERNAME}" -H "Content-type:application/json" ${params.ROCKET_CHAT_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
             """
           }
         }
