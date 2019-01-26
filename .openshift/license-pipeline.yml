@@ -30,15 +30,25 @@ objects:
       type: "JenkinsPipeline"
       jenkinsPipelineStrategy:
         jenkinsfilePath: ${PIPELINE_SCRIPT}
-      env:
-        - name: "BUILD_CONTEXT_DIR"
-          value: ""
-        - name: "ARTIFACT_NAME"
-          value: "test.jar"
-        - name: "APPROVER_NOTES"
-          value: "Please review"
-        - name: "APPLICATION_SOURCE_REPO"
-          value: ""
+        env:
+          - name: "BUILD_CONTEXT_DIR"
+            value: ""
+          - name: "ARTIFACT_NAME"
+            value: "test.jar"
+          - name: "APPROVER_NOTES"
+            value: "Please review"
+          - name: "APPLICATION_SOURCE_REPO"
+            value: ""
+          - name: "BLACK_DUCK_CREDENTIALS_ID"
+            value: "blackduck-token"
+          - name: "ROCKET_CHAT_USERNAME_CREDENTIALS_ID"
+            value: "rc-user"
+          - name: "ROCKET_CHAT_TOKEN_CREDENTIALS_ID"
+            value: "rc-token"
+          - name: "NEXUS_USERNAME_CREDENTIALS_ID"
+            value: "nexus-username"
+          - name: "NEXUS_PASSWORD_CREDENTIALS_ID"
+            value: "nexus-password"
 parameters:
 - description: The name for the application.
   name: APPLICATION_NAME
