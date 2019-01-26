@@ -33,7 +33,7 @@ pipeline {
         sh "mkdir -p ./scanreports"
           withCredentials([
           string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
-            hub_detect '--blackduck.hub.url="${params.BLACKDUCK_URL}" \
+            hub_detect '--blackduck.hub.url=${params.BLACKDUCK_URL} \
               --blackduck.hub.api.token="${HUB_TOKEN}" \
               --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
               --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
