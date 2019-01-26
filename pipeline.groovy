@@ -14,7 +14,7 @@ pipeline {
         script {
           // env.NEXUS_URL = 'http://nexus-memcached-operator.apps.d2.casl.rht-labs.com/'
           // env.RC_URL = 'https://chat.consulting.redhat.com'
-          // env.HUB_URL = 'https://redhathub.blackducksoftware.com'
+          env.HUB_URL = 'https://redhathub.blackducksoftware.com'
           // env.NEXUS_USERNAME = 'admin'
           // env.NEXUS_PASSWORD='admin123'
           env.NEXUS_DESTINATION_REPOSITORY = 'lm-approved'
@@ -33,16 +33,14 @@ pipeline {
         sh "mkdir -p ./scanreports"
           withCredentials([
           string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
-            withEnv(['BLACKDUCK_URL=${params.BLACKDUCK_URL}']) {
-              hub_detect '--blackduck.hub.url="${BLACKDUCK_URL}" \
-                --blackduck.hub.api.token="${HUB_TOKEN}" \
-                --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-                --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
-                --detect.risk.report.pdf=true \
-                --detect.risk.report.pdf.path="./scanreports/" \
-                --blackduck.hub.trust.cert=true \
-                --detect.api.timeout=900000'
-            }
+            hub_detect '--blackduck.hub.url="${HUB_URL}" \
+              --blackduck.hub.api.token="${HUB_TOKEN}" \
+              --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+              --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
+              --detect.risk.report.pdf=true \
+              --detect.risk.report.pdf.path="./scanreports/" \
+              --blackduck.hub.trust.cert=true \
+              --detect.api.timeout=900000'
           }
         archiveArtifacts(artifacts: '**/scanreports/**')
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
