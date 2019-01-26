@@ -33,14 +33,16 @@ pipeline {
         sh "mkdir -p ./scanreports"
           withCredentials([
           string(credentialsId: params.BLACK_DUCK_CREDENTIALS_ID, variable: "HUB_TOKEN")]) {
-            hub_detect '--blackduck.hub.url=${params.BLACKDUCK_URL} \
-              --blackduck.hub.api.token="${HUB_TOKEN}" \
-              --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
-              --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
-              --detect.risk.report.pdf=true \
-              --detect.risk.report.pdf.path="./scanreports/" \
-              --blackduck.hub.trust.cert=true \
-              --detect.api.timeout=900000'
+            withEnv(['BLACKDUCK_URL=${params.BLACKDUCK_URL}']) {
+              hub_detect '--blackduck.hub.url="${BLACKDUCK_URL}" \
+                --blackduck.hub.api.token="${HUB_TOKEN}" \
+                --detect.project.name="RHLMDEMO-${ARTIFACT_NAME}" \
+                --detect.policy.check.fail.on.severities=BLOCKER,CRITICAL \
+                --detect.risk.report.pdf=true \
+                --detect.risk.report.pdf.path="./scanreports/" \
+                --blackduck.hub.trust.cert=true \
+                --detect.api.timeout=900000'
+            }
           }
         archiveArtifacts(artifacts: '**/scanreports/**')
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
