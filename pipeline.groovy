@@ -12,11 +12,7 @@ pipeline {
     stage ('init') {
       steps {
         script {
-          // env.NEXUS_URL = 'http://nexus-memcached-operator.apps.d2.casl.rht-labs.com/'
-          // env.RC_URL = 'https://chat.consulting.redhat.com'
           env.HUB_URL = params.BLACKDUCK_URL 
-          // env.NEXUS_USERNAME = 'admin'
-          // env.NEXUS_PASSWORD='admin123'
           env.NEXUS_DESTINATION_REPOSITORY = 'lm-approved'
         }
       }
@@ -74,6 +70,7 @@ pipeline {
             def uploadPath = new Date().format("YYYY/MM/dd/HH-mm-ss");
             sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
             sh "find . -name '*${ARTIFACT_NAME}*' > uploadfiles"
+            sh "find ~ -name '*${ARTIFACT_NAME}*' > uploadfiles"
             packagePath = readFile('uploadfiles').trim()
             sh "zip -r ${ARTIFACT_NAME}.zip ."
             sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
