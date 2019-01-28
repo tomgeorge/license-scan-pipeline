@@ -86,7 +86,7 @@ pipeline {
           script {
             def message = "The following artifacts have been approved: ${ARTIFACT_NAME}. They can be accessed at ${NEXUS_URL}"
             sh """
-              curl -H "X-Auth-Token: ${ROCKET_CHAT_TOKEN_CREDENTIALS_ID}" -H "X-User-Id: ${ROCKET_CHAT_USERNAME_CREDENTIALS_ID}" -H "Content-type:application/json" ${RC_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
+              curl -H "X-Auth-Token: ${ROCKET_CHAT_TOKEN_CREDENTIALS_ID}" -H "X-User-Id: ${ROCKET_CHAT_USERNAME_CREDENTIALS_ID}" -H "Content-type:application/json" ${params.ROCKET_CHAT_URL}/api/v1/chat.postMessage -d '{ "channel": "#foss-compliance-pipeline", "text": "${message}" }'
            """
           }
         }
