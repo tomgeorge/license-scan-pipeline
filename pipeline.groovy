@@ -40,8 +40,6 @@ pipeline {
           }
         archiveArtifacts(artifacts: '**/scanreports/**')
         sh 'find . -name "*RiskReport.pdf" > ./repfilepath'
-        sh 'ls -laR'
-        sh 'ls -laR ~'
       }
     }
  
@@ -71,7 +69,6 @@ pipeline {
             def uploadPath = new Date().format("YYYY/MM/dd/HH-mm-ss");
             sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/scan-report.pdf" + " -T " + reportPath
             sh "find . -name '*${ARTIFACT_NAME}*' > uploadfiles"
-            sh "find ~ -name '*${ARTIFACT_NAME}*' > uploadfiles_home"
             packagePath = readFile('uploadfiles').trim()
             sh "zip -r ${ARTIFACT_NAME}.zip ."
             sh "curl -k -u ${NEXUS_USERNAME}:${NEXUS_PASSWORD} -X PUT " + uploadUrl + uploadPath + "/${ARTIFACT_NAME}.zip" + " -T ${ARTIFACT_NAME}.zip" 
